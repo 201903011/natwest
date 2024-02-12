@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 // @mui
 import DatePicker from "@mui/lab/DatePicker";
 import { LoadingButton } from "@mui/lab";
-import { Stack } from "@mui/material";
+import { Alert, Box, Card, Container, Stack, Typography } from "@mui/material";
 // redux
 import { useDispatch, useSelector } from "../../redux/store";
 import { getWeatherByCity } from "../../redux/slices/weather";
@@ -14,11 +14,15 @@ import Page from "../../components/page";
 import { FormProvider, RHFTextField } from "../../components/hook-form";
 //
 import useIsMountedRef from "../../hooks/use_ismounted_ref";
+import useResponsive from "../../hooks/use_responsive";
+import LoadingScreen from "../../components/loading_screen";
+import InfoCard from "../../sections/app/infocard";
 
 const selectedEventSelector = (state) => {
-  const { data } = state.weather;
-  if (data != null) {
-    return data;
+  const { weather } = state;
+  // console.log(weather);
+  if (weather != null) {
+    return weather;
   }
   return null;
 };
@@ -27,25 +31,16 @@ function WeatherSearch() {
   const dispatch = useDispatch();
 
   const [page, setPage] = useState(1);
-  const booksData = useSelector(selectedEventSelector);
-
-  const handleChangepag = (event, value) => {
-    console.log(value);
-    setPage(value);
-    // dispatch(getBookslist(value));
-  };
+  const weatherData = useSelector(selectedEventSelector);
 
   useEffect(() => {
-    // dispatch(getBookslist(page));
+    // dispatch(getWeatherByCity());
   }, [dispatch]);
 
   const isMountedRef = useIsMountedRef();
 
   const defaultValues = {
-    bookname: "",
-    author: "",
-    isbn: 9874,
-    remeber: true,
+    city: "Mumbai",
   };
 
   const methods = useForm({
@@ -62,7 +57,7 @@ function WeatherSearch() {
   const onSubmit = async (data) => {
     try {
       console.log(data);
-      // dispatch(getCustomBookslist(data.bookname, data.author, data.isbn));
+      dispatch(getWeatherByCity(data.city));
     } catch (error) {
       console.error(error);
       reset();
@@ -74,28 +69,40 @@ function WeatherSearch() {
       }
     }
   };
+  const isDesktop = useResponsive("up", "lg");
 
   return (
     <Page title="App">
+      {weatherData.error != null && (
+        <Alert severity="error">No data Found</Alert>
+      )}
+
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack
           spacing={2}
           direction={{ xs: "column", sm: "row" }}
           sx={{ p: 3, bgcolor: "background.neutral" }}
         >
-          <RHFTextField name="bookname" label="City Name" />
+          <RHFTextField name="city" type="name" label="City" />
 
-          <LoadingButton
-            fullWidth
-            size="large"
-            type="submit"
-            variant="contained"
-            loading={isSubmitting}
-          >
-            Search
-          </LoadingButton>
+          <Box width={isDesktop ? 200 : "lg"}>
+            <LoadingButton
+              fullWidth
+              size="large"
+              type="submit"
+              variant="contained"
+              loading={isSubmitting}
+            >
+              Get weather
+            </LoadingButton>
+          </Box>
         </Stack>
       </FormProvider>
+      <Box height={15} />
+      {weatherData.isLoading && <LoadingScreen />}
+      <Box p={3}>
+        <InfoCard info={weatherData} />
+      </Box>
     </Page>
   );
 }

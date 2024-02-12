@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 // @mui
 import { styled } from "@mui/material/styles";
-import { Box, IconButton, Stack } from "@mui/material";
+import { Box, Container, IconButton, Stack } from "@mui/material";
 // hooks
 // import useSettings from '../../hooks/useSettings';
 import useResponsive from "../../hooks/use_responsive";
@@ -47,65 +47,47 @@ export default function AppLayout() {
 
   const [open, setOpen] = useState(false);
 
-  if (true) {
-    return (
-      <>
-        <Stack direction="column" alignItems="left">
-          <Stack
-            direction="row"
-            alignItems="left"
-            justifyContent="space-between"
-          >
-            <IconButton
-              onClick={() => setOpen(true)}
-              sx={{ mr: 1, color: "text.primary" }}
-            >
-              <Iconify icon="eva:menu-2-fill" />
-            </IconButton>
-          </Stack>
-
-          <Stack direction="row" alignItems="top">
-            <NavbarVertical
+  return (
+    <>
+      {/* <Stack direction="row" >
+        <NavbarVertical
               isOpenSidebar={open}
               onCloseSidebar={() => setOpen(false)}
             />
+        <Outlet />
+        </Stack> */}
+      <Stack direction="column">
+        <Stack
+          direction="row"
+
+          // justifyContent="space-between"
+        >
+          <IconButton
+            onClick={() => setOpen(true)}
+            sx={{ mr: 1, color: "text.primary" }}
+          >
+            <Iconify icon="eva:menu-2-fill" />
+          </IconButton>
+        </Stack>
+
+        <Stack direction="row">
+          <NavbarVertical
+            isOpenSidebar={open}
+            onCloseSidebar={() => setOpen(false)}
+          />
+          <Container>
             <Box
               component="main"
+              width={"lg"}
               sx={{
                 px: { lg: 2 },
-                pt: {
-                  xs: `${HEADER.MOBILE_HEIGHT + 24}px`,
-                  lg: `${HEADER.DASHBOARD_DESKTOP_HEIGHT + 80}px`,
-                },
-                pb: {
-                  xs: `${HEADER.MOBILE_HEIGHT + 24}px`,
-                  lg: `${HEADER.DASHBOARD_DESKTOP_HEIGHT + 24}px`,
-                },
               }}
             >
               <Outlet />
             </Box>
-          </Stack>
+          </Container>
         </Stack>
-      </>
-    );
-  }
-
-  return (
-    <Box
-      sx={{
-        display: { lg: "flex" },
-        minHeight: { lg: 1 },
-      }}
-    >
-      <NavbarVertical
-        isOpenSidebar={open}
-        onCloseSidebar={() => setOpen(false)}
-      />
-
-      <MainStyle collapseClick={collapseClick}>
-        <Outlet />
-      </MainStyle>
-    </Box>
+      </Stack>
+    </>
   );
 }

@@ -1,22 +1,24 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 // import { title } from 'process';
 // utils
 // import {axiosInstance as axios} from '../../utils/axios';;
 //
-import { dispatch } from '../store';
+import { dispatch } from "../store";
+import axios from "axios";
+import axiosInstance from "../../utils/axios";
 
 // ----------------------------------------------------------------------
 
 const initialState = {
   isLoading: false,
-  isCelsius:true,
+  isCelsius: true,
   error: null,
   data: null,
-  message: '',
+  message: "",
 };
 
 const slice = createSlice({
-  name: 'weather',
+  name: "weather",
   initialState,
   reducers: {
     // START LOADING
@@ -33,14 +35,14 @@ const slice = createSlice({
     // GET BOOKS
     getWather(state, action) {
       state.isLoading = false;
-      state.books = action.payload;
+      state.data = action.payload;
+      state.error = null;
     },
 
     celsiusChange(state, action) {
-        state.isLoading = false;
-        state.isCelsius = action.payload;
-    }
-
+      state.isLoading = false;
+      state.isCelsius = action.payload;
+    },
   },
 });
 
@@ -52,12 +54,31 @@ export const { getWather, celsiusChange } = slice.actions;
 
 // ----------------------------------------------------------------------
 
-export function getWeatherByCity(acno, id, token) {
-  console.log(`accession no to issue ${acno}`);
+export function getWeatherByCity(city) {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-    //   dispatch(slice.actions.issueBooks());
+      // console.log(
+      //   `${process.env.REACT_APP_HOST_API_BASE}/weather?appid=68b401a5077c1e54536dd677136b2082&q=${city}`
+      // );
+      const response = await axiosInstance.post(
+        `${process.env.REACT_APP_HOST_API_BASE}/weather?appid=68b401a5077c1e54536dd677136b2082&q=${city}`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          },
+        }
+      );
+
+      if (response.data != null) {
+        dispatch(slice.actions.getWather(response.data));
+      } else {
+        dispatch(slice.actions.hasError("No data Found"));
+      }
+
+      console.log(response.data.main.feels_like);
+      //   dispatch(slice.actions.issueBooks());
     } catch (error) {
       console.log(error);
       dispatch(slice.actions.hasError(error));
@@ -68,11 +89,10 @@ export function getWeatherByCity(acno, id, token) {
 // ----------------------------------------------------------------------
 
 export function convertToCelsius() {
- 
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-    //   dispatch(slice.actions.getIssuedBooksData());
+      //   dispatch(slice.actions.getIssuedBooksData());
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
@@ -85,7 +105,7 @@ export function convertToFarehnite() {
   return async () => {
     dispatch(slice.actions.startLoading());
     try {
-    //   dispatch(slice.actions.getIssuedBooksData());
+      //   dispatch(slice.actions.getIssuedBooksData());
     } catch (error) {
       console.log(error);
       dispatch(slice.actions.hasError(error));
