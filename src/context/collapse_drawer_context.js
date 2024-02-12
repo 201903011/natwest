@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import { createContext, useState, useEffect } from 'react';
+import PropTypes from "prop-types";
+import { createContext, useState, useEffect } from "react";
 // hooks
-import useResponsive from '../hooks/use_responsive';
+import useResponsive from "../hooks/use_responsive";
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ CollapseDrawerProvider.propTypes = {
 };
 
 function CollapseDrawerProvider({ children }) {
-  const isDesktop = useResponsive('up', 'lg');
+  const isDesktop = useResponsive("up", "lg");
 
   const [collapse, setCollapse] = useState({
     click: false,
@@ -39,6 +39,7 @@ function CollapseDrawerProvider({ children }) {
   }, [isDesktop]);
 
   const handleToggleCollapse = () => {
+    console.log("collaspe called");
     setCollapse({ ...collapse, click: !collapse.click });
   };
 

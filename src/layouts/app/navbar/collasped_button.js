@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 // @mui
-import { Box } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -11,6 +11,7 @@ CollapseButton.propTypes = {
 
 export default function CollapseButton({ onToggleCollapse, collapseClick }) {
   return (
+    <IconButton onClick={onToggleCollapse}>
       <Box
         sx={{
           lineHeight: 0,
@@ -25,6 +26,7 @@ export default function CollapseButton({ onToggleCollapse, collapseClick }) {
       >
         {icon}
       </Box>
+    </IconButton>
   );
 }
 
